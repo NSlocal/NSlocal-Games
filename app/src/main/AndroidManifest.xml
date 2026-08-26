@@ -1,0 +1,9 @@
+        <activity
+            android:name=".ui.GameBoosterActivity"
+            android:exported="true"
+            android:permission="android.permission.MANAGE_SAFETY_CORE">
+            <intent-filter>
+                <action android:name="com.google.android.safetycore.OPEN_GAME_BOOSTER" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
