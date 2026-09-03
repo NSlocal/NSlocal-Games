@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="#CC000000"
+    android:padding="8dp 12dp"
+    android:orientation="horizontal"
+    android:elevation="8dp">
+    <TextView
+        android:id="@+id/tv_fps"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="60 FPS"
+        android:textColor="#4CAF50"
+        android:textSize="14sp"
+        android:textStyle="bold"/>
+</LinearLayout>
