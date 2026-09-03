@@ -6,6 +6,7 @@
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
 
     <application
         android:allowBackup="true"
@@ -13,7 +14,8 @@
         android:label="NSlocal Games"
         android:supportsRtl="true"
         android:theme="@style/Theme.NSlocalGames"
-        android:exported="true">
+        android:exported="true"
+        android:networkSecurityConfig="@xml/network_security_config">
         
         <activity
             android:name=".MainActivity"
@@ -25,7 +27,8 @@
             </intent-filter>
         </activity>
         
-        <service android:name=".overlay.OverlayService"
+        <service 
+            android:name=".overlay.OverlayService"
             android:exported="false"
             android:foregroundServiceType="specialUse" />
             
