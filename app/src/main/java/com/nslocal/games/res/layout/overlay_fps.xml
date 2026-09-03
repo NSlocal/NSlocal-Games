@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:background="#CC000000"
+    android:background="@color/overlay_bg"
     android:padding="8dp 12dp"
     android:orientation="horizontal"
     android:elevation="8dp">
@@ -11,7 +11,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="60 FPS"
-        android:textColor="#4CAF50"
+        android:textColor="@color/green_fps"
         android:textSize="14sp"
         android:textStyle="bold"/>
 </LinearLayout>
