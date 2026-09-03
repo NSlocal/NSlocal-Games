@@ -1,0 +1,164 @@
+name: NSlocal-Games • Build & Release APK
+on:
+    tags: [ 'v*' ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:  # Manual trigger dari Actions tab
+
+env:
+  JAVA_VERSION: '17'
+  DISTRIBUTION: 'temurin'
+  BUILD_TOOLS: "36.0.0"
+  COMPILE_SDK: "36"
+  MIN_SDK: "36"
+  APP_NAME: "NSlocalGames"
+  PACKAGE_NAME: "com.nslocal.games"
+
+permissions:
+  contents: write
+  packages: write
+  actions: read
+
+jobs:
+  build:
+    name: 📦 Build Release APK
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+
+    steps:
+      # 11. Checkout Code
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # 12. Setup Java + Android SDK
+      - name: ☕ Set up JDK ${{ env.JAVA_VERSION }}
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: ${{ env.DISTRIBUTION }}
+          cache: 'gradle'
+
+      - name: 📲 Setup Android SDK
+        uses: android-actions/setup-android@v3
+        with:
+          api-levels: ${{ env.COMPILE_SDK }}
+          build-tools: ${{ env.BUILD_TOOLS }}
+
+      # 13. Gradle Cache → cepat build
+      - name: 🗄️ Cache Gradle dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      # 14. Permission Gradlew
+      - name: 🔑 Grant execute permission
+        run: chmod +x ./gradlew
+
+      # 15. Decode Keystore dari GitHub Secrets
+      - name: 🔐 Decode Keystore
+        env:
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_FILE }}
+        run: |
+          mkdir -p ~/.android
+          echo "$KEYSTORE_BASE64" | base64 --decode > ~/.android/release.jks
+          echo "Keystore ready at ~/.android/release.jks"
+
+      # 16. Create local.properties
+      - name: ⚙️ Create local.properties
+        run: |
+          echo "sdk.dir=$ANDROID_HOME" > local.properties
+          echo "storeFile=$HOME/.android/release.jks" >> local.properties
+          echo "storePassword=${{ secrets.KEYSTORE_PASSWORD }}" >> local.properties
+          echo "keyAlias=${{ secrets.KEY_ALIAS }}" >> local.properties
+          echo "keyPassword=${{ secrets.KEY_PASSWORD }}" >> local.properties
+
+      # 17. Build Debug APK (test)
+      - name: 🔨 Build Debug APK
+        id: build_debug
+        run: ./gradlew assembleDebug --no-daemon
+        continue-on-error: false
+
+      # 18. Build Release APK (Signed)
+      - name: 🔨 Build Release APK
+        id: build_release
+        env:
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+        run: ./gradlew assembleRelease --no-daemon --stacktrace
+
+      # 19. Build AAB (Play Store)
+      - name: 📦 Build App Bundle (AAB)
+        run: ./gradlew bundleRelease --no-daemon
+
+      # 20. Upload Debug APK → Artifacts
+      - name: 📤 Upload Debug APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.APP_NAME }}-Debug-${{ github.sha }}
+          path: app/build/outputs/apk/debug/app-debug.apk
+          retention-days: 7
+
+      # 21. Upload Release APK → Artifacts
+      - name: 📤 Upload Release APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.APP_NAME }}-Release-${{ github.sha }}
+          path: app/build/outputs/apk/release/app-release.apk
+          retention-days: 30
+
+      # 22. Upload AAB → Artifacts
+      - name: 📤 Upload App Bundle (AAB)
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.APP_NAME }}-Bundle-${{ github.sha }}
+          path: app/build/outputs/bundle/release/app-release.aab
+          retention-days: 30
+
+      # 23. GitHub Release Bot — Auto Create Release
+      - name: 🤖 Create Release & Attach APK
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: ${{ env.APP_NAME }} ${{ github.ref_name }}
+          body: |
+            ## ✅ NSlocal-Games — ${{ github.ref_name }}
+            - 📱 Android 16+ • API 36
+            - 🎮 Supported: QQ飞车 • Speed Drifters
+            - ✨ Liquid Glass UI • Anti-Lag • Anti-Freezer
+            - 🧩 Qualcomm + MediaTek • No Google Services
+            - 📅 Build: ${{ github.sha }}
+          files: |
+            app/build/outputs/apk/release/app-release.apk
+            app/build/outputs/apk/debug/app-debug.apk
+            app/build/outputs/bundle/release/app-release.aab
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # 24. Post Build Info
+      - name: 📋 Build Summary
+        run: |
+          echo "✅ Build Complete!"
+          echo "📦 Package: ${{ env.PACKAGE_NAME }}"
+          echo "📱 Min SDK: ${{ env.MIN_SDK }} (Android 16)"
+          echo "🔨 SHA: ${{ github.sha }}"
+          echo "🧩 Branch: ${{ github.ref_name }}"
+
+      # 25. Notification / Summary
+      - name: 📢 Final Status
+        run: |
+          echo "### ✅ NSlocal-Games Build Complete" >> $GITHUB_STEP_SUMMARY
+          echo "- **APK Release**: Ready ✅" >> $GITHUB_STEP_SUMMARY
+          echo "- **AAB Bundle**: Ready ✅" >> $GITHUB_STEP_SUMMARY
+          echo "- **Target**: Android 16+ API 36 ✅" >> $GITHUB_STEP_SUMMARY
+          
