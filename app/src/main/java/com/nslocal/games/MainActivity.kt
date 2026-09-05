@@ -1,97 +1,40 @@
 package com.nslocal.games
 
-import android.content.Intent
-import android.net.Uri
-import android.os.Build
 import android.os.Bundle
-import android.provider.Settings
-import android.widget.Toast
+import android.widget.Button
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import com.nslocal.games.databinding.ActivityMainBinding
 import com.nslocal.games.game.GameList
-import com.nslocal.games.overlay.OverlayService
-import com.nslocal.games.perf.PerformanceHelper
 
 class MainActivity : AppCompatActivity() {
-
-    private lateinit var binding: ActivityMainBinding
-    private lateinit var perf: PerformanceHelper
-    private val REQUEST_OVERLAY = 1001
+    private lateinit var tvDeviceInfo: TextView
+    private lateinit var tvGameList: TextView
+    private lateinit var btnStart: Button
+    private lateinit var btnStop: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityMainBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+        setContentView(R.layout.activity_main)
 
-        perf = PerformanceHelper(this)
-        perf.startMonitoring()
+        tvDeviceInfo = findViewById(R.id.tvDeviceInfo)
+        tvGameList = findViewById(R.id.tvGameList)
+        btnStart = findViewById(R.id.btnStart)
+        btnStop = findViewById(R.id.btnStop)
 
-        checkOverlayPermission()
-        setupUI()
-        loadGameList()
-        showDeviceInfo()
-    }
-
-    private fun checkOverlayPermission() {
-        if (!Settings.canDrawOverlays(this)) {
-            val intent = Intent(
-                Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
-                Uri.parse("package:$packageName")
-            )
-            startActivityForResult(intent, REQUEST_OVERLAY)
-        } else {
-            startOverlayService()
-        }
-    }
-
-    private fun setupUI() {
-        binding.btnStart.setOnClickListener {
-            if (Settings.canDrawOverlays(this)) {
-                startOverlayService()
-                Toast.makeText(this, "✅ Overlay Started!", Toast.LENGTH_SHORT).show()
-            } else {
-                checkOverlayPermission()
-            }
-        }
-        binding.btnStop.setOnClickListener {
-            stopService(Intent(this, OverlayService::class.java))
-            Toast.makeText(this, "🛑 Overlay Stopped", Toast.LENGTH_SHORT).show()
-        }
-    }
-
-    private fun loadGameList() {
-        val games = GameList.games
-        val sb = StringBuilder()
-        games.forEachIndexed { i, g ->
-            sb.append("${i+1}. ${g.name}\n   └ ${g.packageName}\n")
-        }
-        binding.tvGameList.text = sb.toString()
-    }
-
-    private fun showDeviceInfo() {
-        val chip = when {
-            perf.isQualcomm -> "✅ Qualcomm Snapdragon"
-            perf.isMediaTek -> "✅ MediaTek"
-            else -> "⚠️ Generic"
-        }
-        binding.tvDeviceInfo.text = """
-            📱 Device: ${Build.MANUFACTURER} ${Build.MODEL}
-            🧩 Chip: $chip
+        tvDeviceInfo.text = """
+            📱 ${Build.MANUFACTURER} ${Build.MODEL}
             📊 API Level: ${Build.VERSION.SDK_INT}
-            🎯 Target: Android 16+ (API 36)
+            🧩 NSlocal-Games v1.0.0
         """.trimIndent()
-    }
 
-    private fun startOverlayService() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            startForegroundService(Intent(this, OverlayService::class.java))
-        } else {
-            startService(Intent(this, OverlayService::class.java))
+        val gameNames = GameList.games.joinToString("\n") { "• ${it.name} (${it.packageName})" }
+        tvGameList.text = gameNames
+
+        btnStart.setOnClickListener {
+            tvDeviceInfo.append("\n✅ Overlay Starting...")
         }
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        perf.stopMonitoring()
+        btnStop.setOnClickListener {
+            tvDeviceInfo.append("\n⏹ Overlay Stopped")
+        }
     }
 }
