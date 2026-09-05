@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory android:title="🎮 Performance">
+        <SwitchPreference android:key="gpu_boost" android:title="GPU Boost" android:summary="Enable GPU frequency optimization" android:defaultValue="true"/>
+        <SwitchPreference android:key="ram_auto_clean" android:title="Auto Clean RAM" android:summary="Auto clean RAM when low" android:defaultValue="true"/>
+        <SwitchPreference android:key="touch_optimize" android:title="Touch Response" android:summary="Reduce animation latency" android:defaultValue="true"/>
+        <SwitchPreference android:key="dns_optimize" android:title="DNS Optimize" android:summary="Use Google DNS low latency" android:defaultValue="true"/>
+    </PreferenceCategory>
+    <PreferenceCategory android:title="🛡️ Protection">
+        <SwitchPreference android:key="anti_lag" android:title="Anti-Lag" android:summary="Stabilize FPS" android:defaultValue="true"/>
+        <SwitchPreference android:key="anti_freeze" android:title="Anti-Freezer" android:summary="Prevent game freeze" android:defaultValue="true"/>
+        <SwitchPreference android:key="thermal_control" android:title="Thermal Control" android:summary="Monitor & warn overheat" android:defaultValue="true"/>
+    </PreferenceCategory>
+</PreferenceScreen>
