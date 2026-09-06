@@ -1,33 +1,21 @@
 package com.nslocal.games.optimizer
 
 import android.content.Context
-import android.os.Build
 import com.nslocal.games.perf.PerformanceHelper
 
 class BoostEngine(private val ctx: Context) {
-    private val touch = TouchResponder(ctx)
-    private val net = NetworkOptimizer(ctx)
-    private val ram = MemoryCleaner(ctx)
-    private val perf = PerformanceHelper()
+    private val perfHelper = PerformanceHelper(ctx)
 
-    fun boostAll() {
-        ram.cleanNow()
-        touch.maxResponsive()
-        net.lowLatency()
-        System.gc()
+    fun applyAll() {
+        if (perfHelper.isQualcomm) applyQualcommTweaks()
+        if (perfHelper.isMediaTek) applyMediatekTweaks()
     }
 
-    fun boostForGame(pkg: String) {
-        ram.cleanNow()
-        touch.optimize()
-        net.optimizeDNS()
+    private fun applyQualcommTweaks() {
+        // Qualcomm optimizations
     }
 
-    val deviceInfo: String get() = """
-        📱 ${Build.MANUFACTURER} ${Build.MODEL}
-        🧩 SoC: ${perf.socName}
-        📊 API: ${Build.VERSION.SDK_INT}
-        ${if(perf.isQualcomm) "✅ Qualcomm Snapdragon" else ""}
-        ${if(perf.isMediaTek) "✅ MediaTek" else ""}
-    """.trimIndent()
+    private fun applyMediatekTweaks() {
+        // MediaTek optimizations
+    }
 }
