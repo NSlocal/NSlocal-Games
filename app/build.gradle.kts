@@ -11,24 +11,10 @@ android {
         targetSdk = 36
         versionCode = 1
         versionName = "1.0.0"
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-    }
-    signingConfigs {
-        create("release") {
-            storeFile = file(System.getenv("STORE_FILE") ?: "../release.keystore")
-            storePassword = System.getenv("STORE_PASSWORD") ?: "NSlocal2026!"
-            keyAlias = System.getenv("KEY_ALIAS") ?: "nslocalgames"
-            keyPassword = System.getenv("KEY_PASSWORD") ?: "NSlocal2026!"
-            enableV1Signing = true
-            enableV2Signing = true
-        }
     }
     buildTypes {
-        release {
-            isMinifyEnabled = false
-            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
-            signingConfig = signingConfigs["release"]
-        }
+        debug { isMinifyEnabled = false }
+        release { isMinifyEnabled = false }
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
