@@ -8,13 +8,14 @@ import android.provider.Settings
 import android.view.View
 import android.view.WindowManager
 import android.widget.Button
+import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.nslocal.games.optimizer.BoostEngine
-import com.nslocal.games.ui.FPSOverlay
-import com.nslocal.games.ui.CPUOverlay
 import com.nslocal.games.ui.BatteryOverlay
+import com.nslocal.games.ui.CPUOverlay
+import com.nslocal.games.ui.FPSOverlay
 import com.nslocal.games.ui.TempOverlay
 import com.nslocal.games.ui.glass.LiquidGlassView
 
@@ -45,19 +46,17 @@ class MainActivity : AppCompatActivity() {
         btnPerm.text = "Allow Overlay Permission"
         btnPerm.setTextColor(android.graphics.Color.WHITE)
         btnPerm.setBackgroundColor(android.graphics.Color.parseColor("#4CAF50"))
-        val layout = findViewById<android.widget.LinearLayout>(R.id.root_layout)
+        val layout = findViewById<LinearLayout>(R.id.root_layout)
         layout.addView(btnPerm)
 
         tv.text = "Device: ${Build.MANUFACTURER} ${Build.MODEL}\nAPI: ${Build.VERSION.SDK_INT}"
-
         boostEngine = BoostEngine(this)
 
         btnPerm.setOnClickListener { checkOverlayPermission() }
-
         btn.setOnClickListener {
             if (checkOverlayPermission()) {
                 activateAllFeatures()
-                Toast.makeText(this, "✅ Glass+Overlay+Boost+COOLING ACTIVE!", Toast.LENGTH_LONG).show()
+                Toast.makeText(this, "✅ Glass+Overlay+Cooling ACTIVE!", Toast.LENGTH_LONG).show()
             } else {
                 Toast.makeText(this, "⚠️ Allow Overlay Permission First!", Toast.LENGTH_LONG).show()
             }
@@ -67,7 +66,8 @@ class MainActivity : AppCompatActivity() {
     private fun checkOverlayPermission(): Boolean {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (!Settings.canDrawOverlays(this)) {
-                val intent = Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:$packageName"))
+                val intent = Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                    Uri.parse("package:$packageName"))
                 startActivityForResult(intent, REQUEST_OVERLAY)
                 false
             } else true
@@ -76,19 +76,16 @@ class MainActivity : AppCompatActivity() {
 
     private fun activateAllFeatures() {
         boostEngine.applyAll()
-
         if (!overlaysAdded) {
-            val windowManager = getSystemService(WINDOW_SERVICE) as WindowManager
+            val wm = getSystemService(WINDOW_SERVICE) as WindowManager
             fpsOverlay = FPSOverlay(this)
             cpuOverlay = CPUOverlay(this)
             batteryOverlay = BatteryOverlay(this)
-            tempOverlay = TempOverlay(this) // 🔋🌡️ SUHU MONITOR BARU!
-
-            windowManager.addView(fpsOverlay, fpsOverlay.params)
-            windowManager.addView(cpuOverlay, cpuOverlay.params)
-            windowManager.addView(batteryOverlay, batteryOverlay.params)
-            windowManager.addView(tempOverlay, tempOverlay.params) // Tampilkan suhu!
-
+            tempOverlay = TempOverlay(this)
+            wm.addView(fpsOverlay, fpsOverlay.params)
+            wm.addView(cpuOverlay, cpuOverlay.params)
+            wm.addView(batteryOverlay, batteryOverlay.params)
+            wm.addView(tempOverlay, tempOverlay.params)
             overlaysAdded = true
         }
         glassView.invalidate()
@@ -102,6 +99,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    @Suppress("DEPRECATION")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == REQUEST_OVERLAY && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
