@@ -1,0 +1,2 @@
+-keep class com.nslocal.games.** { *; }
+-dontwarn com.nslocal.games.**
