@@ -56,9 +56,9 @@ class MainActivity : AppCompatActivity() {
         btn.setOnClickListener {
             if (checkOverlayPermission()) {
                 activateAllFeatures()
-                Toast.makeText(this, "✅ Glass+Overlay+Cooling ACTIVE!", Toast.LENGTH_LONG).show()
+                Toast.makeText(this, "✅ ALL FEATURES ACTIVE!", Toast.LENGTH_LONG).show()
             } else {
-                Toast.makeText(this, "⚠️ Allow Overlay Permission First!", Toast.LENGTH_LONG).show()
+                Toast.makeText(this, "⚠️ Allow Overlay First!", Toast.LENGTH_LONG).show()
             }
         }
     }
@@ -104,9 +104,9 @@ class MainActivity : AppCompatActivity() {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == REQUEST_OVERLAY && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (Settings.canDrawOverlays(this)) {
-                Toast.makeText(this, "✅ Overlay Permission ALLOWED!", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "✅ Permission ALLOWED!", Toast.LENGTH_SHORT).show()
             } else {
-                Toast.makeText(this, "❌ Permission DENIED!", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "❌ DENIED!", Toast.LENGTH_SHORT).show()
             }
         }
     }
