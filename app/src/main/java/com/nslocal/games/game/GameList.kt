@@ -1,10 +1,5 @@
 package com.nslocal.games.game
 
-data class GameItem(
-    val name: String,
-    val packageName: String
-)
-
 object GameList {
     val games = listOf(
         GameItem("QQ飞车 / QQ Speed", "com.tencent.tmgp.speedmobile"),
