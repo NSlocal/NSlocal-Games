@@ -1,33 +1,20 @@
 package com.nslocal.games
 
 import android.os.Bundle
-import android.widget.Button
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import com.nslocal.games.optimizer.BoostEngine
-import com.nslocal.games.optimizer.MemoryCleaner
+import com.nslocal.games.perf.PerformanceHelper
 
 class SettingsActivity : AppCompatActivity() {
-    private lateinit var btnBoost: Button
-    private lateinit var btnCleanRAM: Button
-    private lateinit var tvStatus: TextView
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_settings)
+        setContentView(R.layout.activity_main)
 
-        btnBoost = findViewById(R.id.btnBoost)
-        btnCleanRAM = findViewById(R.id.btnCleanRAM)
-        tvStatus = findViewById(R.id.tvStatus)
-
-        val boost = BoostEngine(this)
-        val cleaner = MemoryCleaner(this)
-
-        btnBoost.setOnClickListener {
-            tvStatus.text = boost.deviceInfo + "\n✅ Boost Applied!"
-        }
-        btnCleanRAM.setOnClickListener {
-            tvStatus.text = cleaner.cleanNow()
-        }
+        val perfHelper = PerformanceHelper(this)
+        val deviceInfo = """
+            Device: ${perfHelper.deviceModel}
+            SOC: ${perfHelper.socName}
+            Chip: ${if (perfHelper.isQualcomm) "Qualcomm" else if (perfHelper.isMediaTek) "MediaTek" else "Unknown"}
+            Android: ${perfHelper.androidVersion} (SDK ${perfHelper.sdkLevel})
+        """.trimIndent()
     }
 }
