@@ -6,7 +6,6 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.nslocal.games.R
-import com.nslocal.games.game.GameItem
 
 class GameDashboard : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -18,9 +17,9 @@ class GameDashboard : AppCompatActivity() {
         tvGame.setTextColor(Color.WHITE)
         tvGame.textSize = 18f
 
-        val game: GameItem? = intent.getParcelableExtra("game")
-        if (game != null) {
-            tvGame.text = game.name
+        val gameName = intent.getStringExtra("game_name")
+        if (!gameName.isNullOrEmpty()) {
+            tvGame.text = gameName
         } else {
             tvGame.text = "No Game Selected"
         }
