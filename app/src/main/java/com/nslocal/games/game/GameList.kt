@@ -2,21 +2,20 @@ package com.nslocal.games.game
 
 data class GameItem(
     val name: String,
-    val packageName: String,
-    val description: String = ""
+    val packageName: String
 )
 
 object GameList {
     val games = listOf(
-        GameItem(
-            name = "QQ飞车",
-            packageName = "com.tencent.tmgp.speedmobile",
-            description = "QQ Speed Mobile — Tencent racing game"
-        ),
-        GameItem(
-            name = "Speed Drifters",
-            packageName = "com.garena.game.fctw",
-            description = "Garena Speed Drifters racing game"
-        )
+        GameItem("QQ飞车 / QQ Speed", "com.tencent.tmgp.speedmobile"),
+        GameItem("Speed Drifters", "com.tencent.tmgp.speedmobile"),
+        GameItem("PUBG Mobile", "com.tencent.ig"),
+        GameItem("Mobile Legends", "com.mobile.legends"),
+        GameItem("Free Fire", "com.dts.freefireth"),
+        GameItem("Call of Duty Mobile", "com.activision.callofduty.shooter"),
+        GameItem("Honor of Kings", "com.tencent.tmgp.sgame"),
+        GameItem("Arena of Valor", "com.ngame.allstar.eu"),
+        GameItem("Garena RoV", "com.garena.game.kgth"),
+        GameItem("eFootball", "jp.konami.pesam")
     )
 }
