@@ -9,7 +9,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="🎮 NSlocal Games"
+        android:text="NSlocal Games"
         android:textSize="24sp"
         android:textColor="@color/white_cpu"
         android:layout_marginBottom="24dp"/>
@@ -25,7 +25,7 @@
         android:id="@+id/btnStart"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="▶ Start"
+        android:text="Start"
         android:backgroundTint="@color/primary"
         android:layout_marginBottom="12dp"/>
 </LinearLayout>
