@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/bg_dark"
+    android:padding="24dp">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="⚙️ Settings"
+        android:textSize="22sp"
+        android:textColor="@color/white_cpu"
+        android:layout_marginBottom="24dp"/>
+
+    <TextView
+        android:id="@+id/tvStatus"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Status: Ready"
+        android:textSize="13sp"
+        android:textColor="@color/white_cpu"
+        android:padding="16dp"
+        android:background="@drawable/glass_panel"
+        android:layout_marginBottom="20dp"/>
+
+    <Button
+        android:id="@+id/btnBoost"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="🚀 Boost Performance"
+        android:backgroundTint="@color/primary"
+        android:textColor="@color/white_cpu"
+        android:layout_marginBottom="12dp"/>
+
+    <Button
+        android:id="@+id/btnCleanRAM"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="🧹 Clean RAM Now"
+        android:backgroundTint="@color/accent"
+        android:textColor="@color/bg_dark"/>
+
+</LinearLayout>
