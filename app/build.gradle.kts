@@ -1,6 +1,7 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
+    id("org.jetbrains.kotlin.plugin.parcelize") version "2.0.21"
 }
 android {
     namespace = "com.nslocal.games"
@@ -13,23 +14,15 @@ android {
         versionName = "1.0.0"
     }
     buildTypes {
-        debug {
-            isMinifyEnabled = false
-        }
-        release {
-            isMinifyEnabled = false
-        }
+        debug { isMinifyEnabled = false }
+        release { isMinifyEnabled = false }
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
-    kotlinOptions {
-        jvmTarget = "17"
-    }
-    buildFeatures {
-        viewBinding = true
-    }
+    kotlinOptions { jvmTarget = "17" }
+    buildFeatures { viewBinding = true }
 }
 dependencies {
     implementation("androidx.core:core-ktx:1.15.0")
