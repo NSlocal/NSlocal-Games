@@ -39,21 +39,20 @@ class TempOverlay(private val ctx: Context) : TextView(ctx), View.OnTouchListene
         setPadding(14, 8, 14, 8)
         setOnTouchListener(this)
 
-        thermalManager.onTempChanged = { battTemp, cpuTemp, _ ->
-            updateDisplay(battTemp, cpuTemp)
+        thermalManager.onTempChanged = { batt, cpu ->
+            updateDisplay(batt, cpu)
         }
         thermalManager.startMonitoring()
     }
 
     private fun updateDisplay(batt: Float, cpu: Float) {
-        val tempColor = when {
-            batt < 38f -> Color.parseColor("#00E676")
-            batt < 45f -> Color.parseColor("#FFC107")
-            batt < 50f -> Color.parseColor("#FF9800")
+        val color = when {
+            batt < 42f -> Color.parseColor("#00E676")
+            batt < 48f -> Color.parseColor("#FFC107")
             else -> Color.parseColor("#F44336")
         }
-        setTextColor(tempColor)
-        text = "🔋 Bat: %.1f°C | 🔥 CPU: %.1f°C".format(batt, cpu)
+        setTextColor(color)
+        text = "🔋 %.1f°C | 🔥 %.1f°C".format(batt, cpu)
     }
 
     override fun onTouch(v: View?, event: MotionEvent): Boolean {
