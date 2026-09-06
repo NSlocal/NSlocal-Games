@@ -12,7 +12,7 @@ class GameDashboard : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val rootLayout = findViewById<LinearLayout>(R.id.root_layout)
+        val rootLayout = findViewById<LinearLayout>(android.R.id.content)
         val tvGame = TextView(this)
         tvGame.setTextColor(Color.WHITE)
         tvGame.textSize = 18f
