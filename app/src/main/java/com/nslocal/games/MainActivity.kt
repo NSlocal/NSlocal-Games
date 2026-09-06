@@ -11,7 +11,9 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         val tv: TextView = findViewById(R.id.tvDeviceInfo)
         val btn: Button = findViewById(R.id.btnStart)
-        tv.text = "📱 ${Build.MANUFACTURER} ${Build.MODEL}\n📊 API: ${Build.VERSION.SDK_INT}"
-        btn.setOnClickListener { tv.append("\n✅ Ready!") }
+        tv.text = "Device: ${Build.MANUFACTURER} ${Build.MODEL}\nAPI: ${Build.VERSION.SDK_INT}"
+        btn.setOnClickListener {
+            tv.append("\nReady!")
+        }
     }
 }
