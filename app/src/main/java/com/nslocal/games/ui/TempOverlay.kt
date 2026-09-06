@@ -3,8 +3,6 @@ package com.nslocal.games.ui
 import android.content.Context
 import android.graphics.Color
 import android.os.Build
-import android.os.Handler
-import android.os.Looper
 import android.view.Gravity
 import android.view.MotionEvent
 import android.view.View
@@ -13,13 +11,16 @@ import android.widget.TextView
 import com.nslocal.games.perf.ThermalCoolingManager
 
 class TempOverlay(private val ctx: Context) : TextView(ctx), View.OnTouchListener {
-    private var initialX = 0f; private var initialY = 0f
-    private var initialTouchX = 0f; private var initialTouchY = 0f
+    private var initialX = 0f
+    private var initialY = 0f
+    private var initialTouchX = 0f
+    private var initialTouchY = 0f
     private val wm = ctx.getSystemService(Context.WINDOW_SERVICE) as WindowManager
     private val thermalManager = ThermalCoolingManager(ctx)
 
     val params = WindowManager.LayoutParams(
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+            WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
         else WindowManager.LayoutParams.TYPE_PHONE,
         WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL,
         WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN,
@@ -28,7 +29,8 @@ class TempOverlay(private val ctx: Context) : TextView(ctx), View.OnTouchListene
         width = WindowManager.LayoutParams.WRAP_CONTENT
         height = WindowManager.LayoutParams.WRAP_CONTENT
         gravity = Gravity.TOP or Gravity.START
-        x = 20; y = 155
+        x = 20
+        y = 155
     }
 
     init {
@@ -38,36 +40,29 @@ class TempOverlay(private val ctx: Context) : TextView(ctx), View.OnTouchListene
         setOnTouchListener(this)
 
         thermalManager.onTempChanged = { battTemp, cpuTemp, _ ->
-            updateTempDisplay(battTemp, cpuTemp)
-        }
-        thermalManager.onCoolingAction = { action, temp ->
-            updateStatus(action, temp)
+            updateDisplay(battTemp, cpuTemp)
         }
         thermalManager.startMonitoring()
     }
 
-    private fun updateTempDisplay(batt: Float, cpu: Float) {
+    private fun updateDisplay(batt: Float, cpu: Float) {
         val tempColor = when {
-            batt < 38f -> Color.parseColor("#00E676")  // Hijau — aman
-            batt < 45f -> Color.parseColor("#FFC107")  // Kuning — waspada
-            batt < 50f -> Color.parseColor("#FF9800")  // Oranye — panas
-            else -> Color.parseColor("#F44336")        // Merah — bahaya
+            batt < 38f -> Color.parseColor("#00E676")
+            batt < 45f -> Color.parseColor("#FFC107")
+            batt < 50f -> Color.parseColor("#FF9800")
+            else -> Color.parseColor("#F44336")
         }
         setTextColor(tempColor)
-        text = "🔋 Bat: ${batt.formatTemp()}°C | 🔥 CPU: ${cpu.formatTemp()}°C"
+        text = "🔋 Bat: %.1f°C | 🔥 CPU: %.1f°C".format(batt, cpu)
     }
-
-    private fun updateStatus(action: String, temp: Float) {
-        // Bisa tambah indikator status di sini
-    }
-
-    private fun Float.formatTemp(): String = String.format("%.1f", this)
 
     override fun onTouch(v: View?, event: MotionEvent): Boolean {
         when (event.action) {
             MotionEvent.ACTION_DOWN -> {
-                initialX = params.x.toFloat(); initialY = params.y.toFloat()
-                initialTouchX = event.rawX; initialTouchY = event.rawY
+                initialX = params.x.toFloat()
+                initialY = params.y.toFloat()
+                initialTouchX = event.rawX
+                initialTouchY = event.rawY
                 return true
             }
             MotionEvent.ACTION_MOVE -> {
