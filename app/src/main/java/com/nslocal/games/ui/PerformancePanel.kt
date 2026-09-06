@@ -38,7 +38,7 @@ class PerformancePanel @JvmOverloads constructor(
     fun updateInfo() {
         tvInfo.text = """
             SOC: ${perfHelper.socName}
-            Chip: ${if (perfHelper.isQualcomm) "Qualcomm" else if (perfHelper.isMediatek) "MediaTek" else "Unknown"}
+            Chip: ${if (perfHelper.isQualcomm) "Qualcomm" else if (perfHelper.isMediaTek) "MediaTek" else "Unknown"}
             Device: ${perfHelper.deviceModel}
             Android: ${perfHelper.androidVersion} (SDK ${perfHelper.sdkLevel})
         """.trimIndent()
