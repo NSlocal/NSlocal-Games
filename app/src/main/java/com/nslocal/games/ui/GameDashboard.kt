@@ -16,14 +16,7 @@ class GameDashboard : AppCompatActivity() {
         val tvGame = TextView(this)
         tvGame.setTextColor(Color.WHITE)
         tvGame.textSize = 18f
-
-        val gameName = intent.getStringExtra("game_name")
-        if (!gameName.isNullOrEmpty()) {
-            tvGame.text = gameName
-        } else {
-            tvGame.text = "No Game Selected"
-        }
-
+        tvGame.text = "NSlocal Games — Dashboard"
         rootLayout?.addView(tvGame)
     }
 }
