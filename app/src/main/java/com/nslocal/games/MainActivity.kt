@@ -15,6 +15,7 @@ import com.nslocal.games.optimizer.BoostEngine
 import com.nslocal.games.ui.FPSOverlay
 import com.nslocal.games.ui.CPUOverlay
 import com.nslocal.games.ui.BatteryOverlay
+import com.nslocal.games.ui.TempOverlay
 import com.nslocal.games.ui.glass.LiquidGlassView
 
 class MainActivity : AppCompatActivity() {
@@ -26,6 +27,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var fpsOverlay: FPSOverlay
     private lateinit var cpuOverlay: CPUOverlay
     private lateinit var batteryOverlay: BatteryOverlay
+    private lateinit var tempOverlay: TempOverlay
     private lateinit var boostEngine: BoostEngine
     private var overlaysAdded = false
 
@@ -33,12 +35,10 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        // Init Glass UI
         glassView = LiquidGlassView(this)
         val rootView = findViewById<View>(android.R.id.content) as android.view.ViewGroup
         rootView.addView(glassView)
 
-        // Init Views
         val tv: TextView = findViewById(R.id.tvDeviceInfo)
         val btn: Button = findViewById(R.id.btnStart)
         val btnPerm = Button(this)
@@ -50,19 +50,16 @@ class MainActivity : AppCompatActivity() {
 
         tv.text = "Device: ${Build.MANUFACTURER} ${Build.MODEL}\nAPI: ${Build.VERSION.SDK_INT}"
 
-        // Init Boost Engine
         boostEngine = BoostEngine(this)
 
-        // Permission Button
         btnPerm.setOnClickListener { checkOverlayPermission() }
 
-        // Start Button — Activate ALL
         btn.setOnClickListener {
             if (checkOverlayPermission()) {
                 activateAllFeatures()
-                Toast.makeText(this, "✅ Liquid Glass + Overlay + Boost ACTIVE!", Toast.LENGTH_LONG).show()
+                Toast.makeText(this, "✅ Glass+Overlay+Boost+COOLING ACTIVE!", Toast.LENGTH_LONG).show()
             } else {
-                Toast.makeText(this, "⚠️ Please Allow Overlay Permission First!", Toast.LENGTH_LONG).show()
+                Toast.makeText(this, "⚠️ Allow Overlay Permission First!", Toast.LENGTH_LONG).show()
             }
         }
     }
@@ -78,27 +75,37 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun activateAllFeatures() {
-        // Activate Performance Boost — Fix FPS Drop & Lag
         boostEngine.applyAll()
 
-        // Add Overlays — FPS GREEN / CPU WHITE / BATTERY RED
         if (!overlaysAdded) {
             val windowManager = getSystemService(WINDOW_SERVICE) as WindowManager
-            fpsOverlay = FPSOverlay(this); cpuOverlay = CPUOverlay(this); batteryOverlay = BatteryOverlay(this)
+            fpsOverlay = FPSOverlay(this)
+            cpuOverlay = CPUOverlay(this)
+            batteryOverlay = BatteryOverlay(this)
+            tempOverlay = TempOverlay(this) // 🔋🌡️ SUHU MONITOR BARU!
+
             windowManager.addView(fpsOverlay, fpsOverlay.params)
             windowManager.addView(cpuOverlay, cpuOverlay.params)
             windowManager.addView(batteryOverlay, batteryOverlay.params)
+            windowManager.addView(tempOverlay, tempOverlay.params) // Tampilkan suhu!
+
             overlaysAdded = true
         }
-
-        // Glass UI Refresh
         glassView.invalidate()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        if (overlaysAdded) {
+            tempOverlay.destroy()
+            boostEngine.releaseAll()
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == REQUEST_OVERLAY) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && Settings.canDrawOverlays(this)) {
+        if (requestCode == REQUEST_OVERLAY && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (Settings.canDrawOverlays(this)) {
                 Toast.makeText(this, "✅ Overlay Permission ALLOWED!", Toast.LENGTH_SHORT).show()
             } else {
                 Toast.makeText(this, "❌ Permission DENIED!", Toast.LENGTH_SHORT).show()
