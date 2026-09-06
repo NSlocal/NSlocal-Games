@@ -5,8 +5,7 @@
     android:orientation="vertical"
     android:background="@color/bg_dark"
     android:padding="24dp"
-    android:gravity="center_horizontal">
-
+    android:gravity="center">
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -14,44 +13,19 @@
         android:textSize="24sp"
         android:textColor="@color/white_cpu"
         android:layout_marginBottom="24dp"/>
-
     <TextView
         android:id="@+id/tvDeviceInfo"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Loading..."
-        android:textSize="14sp"
         android:textColor="@color/white_cpu"
         android:padding="16dp"
-        android:background="@drawable/glass_panel"
         android:layout_marginBottom="16dp"/>
-
-    <TextView
-        android:id="@+id/tvGameList"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Games:\n• QQ Speed\n• Speed Drifters"
-        android:textSize="14sp"
-        android:textColor="@color/white_cpu"
-        android:padding="16dp"
-        android:background="@drawable/glass_panel"
-        android:layout_marginBottom="24dp"/>
-
     <Button
         android:id="@+id/btnStart"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="▶ Start Overlay"
+        android:text="▶ Start"
         android:backgroundTint="@color/primary"
-        android:textColor="@color/white_cpu"
         android:layout_marginBottom="12dp"/>
-
-    <Button
-        android:id="@+id/btnStop"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="⏹ Stop Overlay"
-        android:backgroundTint="@color/battery_red"
-        android:textColor="@color/white_cpu"/>
-
 </LinearLayout>
