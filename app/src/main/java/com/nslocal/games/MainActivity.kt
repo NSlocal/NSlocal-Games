@@ -1,90 +1,58 @@
-package com.nslocal.games
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/root_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/bg_dark"
+    android:padding="20dp"
+    android:gravity="center_horizontal"
+    android:scrollbars="vertical">
 
-import android.content.Intent
-import android.net.Uri
-import android.os.Build
-import android.os.Bundle
-import android.provider.Settings
-import android.view.View
-import android.view.WindowManager
-import android.widget.Button
-import android.widget.LinearLayout
-import android.widget.TextView
-import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
-import com.nslocal.games.optimizer.BoostEngine
-import com.nslocal.games.ui.BatteryOverlay
-import com.nslocal.games.ui.CPUOverlay
-import com.nslocal.games.ui.FPSOverlay
-import com.nslocal.games.ui.TempOverlay
-import com.nslocal.games.ui.glass.LiquidGlassView
+    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+        android:text="NSlocal Games" android:textSize="28sp" android:textColor="@color/primary"
+        android:textStyle="bold" android:layout_marginTop="16dp" android:layout_marginBottom="4dp"/>
+    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+        android:text="Performance • Cooling • Overlay" android:textSize="13sp" android:textColor="@color/text_gray"
+        android:layout_marginBottom="24dp"/>
 
-class MainActivity : AppCompatActivity() {
-    companion object { const val REQUEST_OVERLAY = 1001 }
+    <LinearLayout android:id="@+id/card_status" android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:orientation="vertical" android:background="@drawable/glass_card" android:padding="20dp"
+        android:layout_marginBottom="16dp" android:gravity="center_horizontal">
+        <TextView android:id="@+id/tvDeviceInfo" android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:text="Loading..." android:textColor="@color/text_white" android:textSize="14sp" android:gravity="center"/>
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:orientation="horizontal" android:layout_marginTop="16dp" android:gravity="center">
+            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:gravity="center">
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="FPS" android:textColor="@color/text_gray" android:textSize="12sp"/>
+                <TextView android:id="@+id/tvFps" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="--" android:textColor="@color/fps_green" android:textSize="18sp" android:textStyle="bold"/>
+            </LinearLayout>
+            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:gravity="center">
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="CPU" android:textColor="@color/text_gray" android:textSize="12sp"/>
+                <TextView android:id="@+id/tvCpu" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="--" android:textColor="@color/cpu_white" android:textSize="18sp" android:textStyle="bold"/>
+            </LinearLayout>
+            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:gravity="center">
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="BATT" android:textColor="@color/text_gray" android:textSize="12sp"/>
+                <TextView android:id="@+id/tvBat" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="--" android:textColor="@color/battery_red" android:textSize="18sp" android:textStyle="bold"/>
+            </LinearLayout>
+            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:gravity="center">
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="TEMP" android:textColor="@color/text_gray" android:textSize="12sp"/>
+                <TextView android:id="@+id/tvTemp" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="--" android:textColor="@color/temp_yellow" android:textSize="18sp" android:textStyle="bold"/>
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
 
-    private lateinit var glassView: LiquidGlassView
-    private lateinit var fpsOverlay: FPSOverlay
-    private lateinit var cpuOverlay: CPUOverlay
-    private lateinit var batteryOverlay: BatteryOverlay
-    private lateinit var tempOverlay: TempOverlay
-    private lateinit var boostEngine: BoostEngine
-    private var overlaysAdded = false
+    <Button android:id="@+id/btnPerm" android:layout_width="match_parent" android:layout_height="52dp"
+        android:text="Allow Overlay Permission" android:backgroundTint="@color/accent" android:textColor="@color/text_white"
+        android:textSize="15sp" android:layout_marginBottom="12dp" android:layout_marginTop="8dp"/>
+    <Button android:id="@+id/btnStart" android:layout_width="match_parent" android:layout_height="56dp"
+        android:text="Start All Features" android:backgroundTint="@color/primary" android:textColor="@color/text_white"
+        android:textSize="16sp" android:textStyle="bold" android:layout_marginBottom="12dp"/>
+    <Button android:id="@+id/btnStop" android:layout_width="match_parent" android:layout_height="52dp"
+        android:text="Stop & Reset" android:backgroundTint="@color/bg_card" android:textColor="@color/text_white"
+        android:textSize="15sp" android:layout_marginBottom="16dp"/>
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-        glassView = LiquidGlassView(this)
-        val rootView = findViewById<View>(android.R.id.content) as android.view.ViewGroup
-        rootView.addView(glassView)
-        val tv: TextView = findViewById(R.id.tvDeviceInfo)
-        val btn: Button = findViewById(R.id.btnStart)
-        val btnPerm = Button(this)
-        btnPerm.text = "Allow Overlay Permission"
-        btnPerm.setTextColor(android.graphics.Color.WHITE)
-        btnPerm.setBackgroundColor(android.graphics.Color.parseColor("#4CAF50"))
-        val layout = findViewById<LinearLayout>(R.id.root_layout)
-        layout.addView(btnPerm)
-        tv.text = "Device: ${Build.MANUFACTURER} ${Build.MODEL}\nAPI: ${Build.VERSION.SDK_INT}"
-        boostEngine = BoostEngine(this)
-        btnPerm.setOnClickListener { checkOverlayPermission() }
-        btn.setOnClickListener {
-            if (checkOverlayPermission()) {
-                activateAllFeatures()
-                Toast.makeText(this, "✅ ALL FEATURES ACTIVE!", Toast.LENGTH_LONG).show()
-            } else {
-                Toast.makeText(this, "⚠️ Allow Overlay First!", Toast.LENGTH_LONG).show()
-            }
-        }
-    }
-
-    private fun checkOverlayPermission(): Boolean = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-        if (!Settings.canDrawOverlays(this)) {
-            val intent = Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:$packageName"))
-            startActivityForResult(intent, REQUEST_OVERLAY); false
-        } else true
-    } else true
-
-    private fun activateAllFeatures() {
-        boostEngine.applyAll()
-        if (!overlaysAdded) {
-            val wm = getSystemService(WINDOW_SERVICE) as WindowManager
-            fpsOverlay = FPSOverlay(this); cpuOverlay = CPUOverlay(this)
-            batteryOverlay = BatteryOverlay(this); tempOverlay = TempOverlay(this)
-            wm.addView(fpsOverlay, fpsOverlay.params); wm.addView(cpuOverlay, cpuOverlay.params)
-            wm.addView(batteryOverlay, batteryOverlay.params); wm.addView(tempOverlay, tempOverlay.params)
-            overlaysAdded = true
-        }
-        glassView.invalidate()
-    }
-
-    override fun onDestroy() { super.onDestroy(); if (overlaysAdded) { tempOverlay.destroy(); boostEngine.releaseAll() } }
-
-    @Suppress("DEPRECATION")
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == REQUEST_OVERLAY && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (Settings.canDrawOverlays(this)) Toast.makeText(this, "✅ Permission ALLOWED!", Toast.LENGTH_SHORT).show()
-            else Toast.makeText(this, "❌ DENIED!", Toast.LENGTH_SHORT).show()
-        }
-    }
-}
+    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+        android:text="Overlay: FPS • CPU • Battery • Temp — Drag to move" android:textSize="12sp"
+        android:textColor="@color/text_gray" android:gravity="center" android:layout_marginTop="8dp"/>
+</LinearLayout>
