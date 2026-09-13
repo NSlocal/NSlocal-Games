@@ -1,20 +1,37 @@
 name: Build & Release APK
-on: push: { branches: [main] }
-  workflow_dispatch: {}
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
 jobs:
   build:
     name: Build APK
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-java@v4
-        with: { java-version: '17', distribution: 'temurin' }
-      - name: Fix permission
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Java 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: 'gradle'
+
+      - name: Fix Gradle Wrapper Permission
         run: |
-          chmod +x ./gradlew || true
-          chmod 755 gradlew || true
+          chmod +x gradlew
+          ls -la gradlew
+
       - name: Build Debug APK
         run: ./gradlew assembleDebug --no-daemon --stacktrace
-      - name: Upload APK
+
+      - name: Upload Built APK
         uses: actions/upload-artifact@v4
-        with: name: NSlocal-Games-Debug; path: app/build/outputs/apk/debug/*.apk; retention-days: 7
+        with:
+          name: NSlocal-Games-Debug
+          path: app/build/outputs/apk/debug/*.apk
+          retention-days: 7
