@@ -13,10 +13,8 @@ class ThermalCoolingManager(private val ctx: Context) {
     private val tempRunnable = object : Runnable {
         override fun run() { readBatteryTemp(); readCpuTemp(); onTempChanged?.invoke(batteryTemp, cpuTemp); handler.postDelayed(this, 2000) }
     }
-
     fun startMonitoring() { if (isMonitoring) return; isMonitoring = true; handler.post(tempRunnable) }
     fun stopMonitoring() { isMonitoring = false; handler.removeCallbacks(tempRunnable) }
-
     private fun readBatteryTemp() {
         val filter = IntentFilter(Intent.ACTION_BATTERY_CHANGED)
         val battery = ctx.registerReceiver(null, filter) ?: return
