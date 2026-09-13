@@ -1,7 +1,7 @@
 package com.nslocal.games.ui
 import android.content.Context; import android.graphics.Color; import android.os.Build; import android.view.Gravity; import android.view.MotionEvent; import android.view.View; import android.view.WindowManager; import android.widget.TextView; import com.nslocal.games.perf.ThermalCoolingManager
 
-class TempOverlay(private val ctx: Context) : TextView(ctx), View.OnTouchListener {
+class TempOverlay(private val ctx: Context, private val onTempUpdate: (Float, Float) -> Unit) : TextView(ctx), View.OnTouchListener {
     private var initialX = 0f; private var initialY = 0f; private var initialTouchX = 0f; private var initialTouchY = 0f
     private val wm = ctx.getSystemService(Context.WINDOW_SERVICE) as WindowManager
     private val thermalManager = ThermalCoolingManager(ctx)
@@ -15,12 +15,11 @@ class TempOverlay(private val ctx: Context) : TextView(ctx), View.OnTouchListene
     init {
         textSize = 13f; setBackgroundColor(Color.parseColor("#CC000000")); setPadding(14,8,14,8); setOnTouchListener(this)
         thermalManager.onTempChanged = { batt, cpu ->
-            val color = when { batt < 42f -> Color.parseColor("#00E676"); batt < 48f -> Color.parseColor("#FFC107"); else -> Color.parseColor("#F44336") }
-            setTextColor(color); text = "🔋 %.1f°C | 🔥 %.1f°C".format(batt, cpu)
+            val color = when { batt < 42f -> Color.parseColor("#22C55E"); batt < 48f -> Color.parseColor("#F59E0B"); else -> Color.parseColor("#EF4444") }
+            setTextColor(color); text = "🌡️ Temp: %.1f°C".format(batt); onTempUpdate(batt, cpu)
         }
         thermalManager.startMonitoring()
     }
-
     override fun onTouch(v: View?, event: MotionEvent): Boolean {
         when (event.action) {
             MotionEvent.ACTION_DOWN -> { initialX = params.x.toFloat(); initialY = params.y.toFloat(); initialTouchX = event.rawX; initialTouchY = event.rawY; return true }
@@ -28,6 +27,5 @@ class TempOverlay(private val ctx: Context) : TextView(ctx), View.OnTouchListene
         }
         return false
     }
-
     fun destroy() { thermalManager.stopMonitoring(); try { wm.removeView(this) } catch (_: Exception) {} }
 }
